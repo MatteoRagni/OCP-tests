@@ -1,0 +1,412 @@
+(in /Users/matteoragni/workspace/OCP-tests)
+mkdir -p /Users/matteoragni/workspace/OCP-tests/test-Bike1D/lib
+mkdir -p /Users/matteoragni/workspace/OCP-tests/test-Bike1D/bin
+cd /Users/matteoragni/workspace/OCP-tests/test-Bike1D/model
+maple Bike1D.maplet
+Compiling model: Bike1D
+    |\^/|     Maple 18 (APPLE UNIVERSAL OSX)
+._|\|   |/|_. Copyright (c) Maplesoft, a division of Waterloo Maple Inc. 2014
+ \  MAPLE  /  All rights reserved. Maple is a trademark of
+ <____ ____>  Waterloo Maple Inc.
+      |       Type ? for help.
+# 
+# 
+# XOptima
+# Solution of Optimal Control Problems (c) 
+# University of Trento
+# Optimal Control of a idealized 1D motorcycle
+# Author:       
+# Date:         
+# Motorcycle model
+> restart:
+# Dinamic system (in time domain)
+> EQ1 := diff(x(t),t) - v(t) ;
+                                   /d      \
+                            EQ1 := |-- x(t)| - v(t)
+                                   \dt     /
+
+> EQ2 := diff(v(t),t) - g*(mur(t)+muf(t)) ;
+                            /d      \
+                     EQ2 := |-- v(t)| - g (mur(t) + muf(t))
+                            \dt     /
+
+> 
+# Coordinate change, use x as independent coordinte
+> 1/diff(t(x),x) - v(t) ;
+                                    1
+                                 ------- - v(t)
+                                 d
+                                 -- t(x)
+                                 dx
+
+> EQ1 := v(x)*diff(v(x),x) - g*(mur(x)+muf(x)) ;
+                              /d      \
+                  EQ1 := v(x) |-- v(x)| - g (mur(x) + muf(x))
+                              \dx     /
+
+> vars := [v(x)];
+                                 vars := [v(x)]
+
+> ctrl := [mur(x),muf(x)];
+                            ctrl := [mur(x), muf(x)]
+
+> eqns := [EQ1];
+                               /d      \
+                 eqns := [v(x) |-- v(x)| - g (mur(x) + muf(x))]
+                               \dx     /
+
+# Optimal control
+# Load MBSymba(c) Multibody library and others
+# Load optimal control library
+> with(XOptima):
+Module '     XOptima beta-1.9-p227', Copyright (C) B-cube Team -- University of Trento 2006-2015
+> interface(rtablesize=20):
+# Optimal control problem definition
+# Load dynamic system
+# Load the ODE dynamic system: list of controls, state variables and differential equations.
+# By default the command set the indepenedent variable equal to "zeta".
+# Map Maple mesh functions to methods of C++ objects 
+> loadDynamicSystem( equations     = eqns,
+>                    states        = vars, 
+>                    controls      = ctrl,
+>                    meshFunctions = []) ;
+Typesetting:-mtext("Independent variable x has been redefined to `zeta`",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+                   [v(zeta)], [mur(zeta), muf(zeta)], [], []
+
+# Boundary conditions and jump conditions
+# Longitudinal and lateral accelerations as a function respectivelly of pedal  and steer angle.:
+> addBoundaryConditions(initial = [v],
+>                       final   = [v]);
+# Dispaly the bounddary condition activation status:
+> infoBoundaryConditions();
+initial_v : Enabled
+final_v   : Enabled
+# Target: performance criterion
+# A small quantity epsilon is added to the denominator to avoid singularities
+> penScale := 1/v(zeta);
+                                             1
+                              penScale := -------
+                                          v(zeta)
+
+> setTarget( lagrange = penScale,
+>            mayer    = 0);
+
+Added target definition
+  Lagrange term = 1/v(zeta)
+  Mayer term    = 0
+# Path constraints
+# Ellipse of adherence
+#addUnilateralConstraint( v(zeta)/vmax <= 2, vMaxLimit, tolerance=0.01, scale=penScale );
+#addUnilateralConstraint( mur(zeta) <= mur_max, rearTyreAdherenceMaxLimit, tolerance=0.01, scale=penScale );
+#addUnilateralConstraint( mur(zeta) >= mur_min, rearTyreAdherenceMinLimit, tolerance=0.01, scale=penScale );
+#addUnilateralConstraint( muf(zeta) <= 0, frontTyreAdherenceMaxLimit, tolerance=0.01, scale=penScale );
+#addUnilateralConstraint( muf(zeta) >= muf_min, frontTyreAdherenceMinLimit, tolerance=0.01, scale=penScale );
+#addUnilateralConstraint( mur(zeta) <= Tmax_normalized(v(zeta)),maxTractionLimit,
+#                         tolerance=0.01, scale = penScale );
+# Control constraints
+> addControlBound( mur,
+>                  min = mur_min,
+>                  max = clip(Tmax_normalized(v(zeta)),0,mur_max),
+>                  controlType="U_LOGARITHMIC",
+>                  scale = penScale ) ;
+
+Added the following penalty constraint
+  name      = murControl
+  class     = PenaltyU
+  u         = mur(zeta)
+  [min,max] = [mur_min,clip(Tmax_normalized(v(zeta)),0,mur_max)]
+  scale     = 1/v(zeta)
+  epsilon   = .1e-2 (*)
+  tolerance = .1e-2 (*)
+  type      = U_LOGARITHMIC
+  (*) can be changed when using continuation
+> addControlBound( muf,
+>                  min = muf_min,
+>                  max = 0,
+>                  controlType="U_LOGARITHMIC",
+>                  scale = penScale) ;
+
+Added the following penalty constraint
+  name      = mufControl
+  class     = PenaltyU
+  u         = muf(zeta)
+  [min,max] = [muf_min,0]
+  scale     = 1/v(zeta)
+  epsilon   = .1e-2 (*)
+  tolerance = .1e-2 (*)
+  type      = U_LOGARITHMIC
+  (*) can be changed when using continuation
+> mapUserFunctionToRegularized(clip,"ClipIntervalWithSinAtan",["h"=0.01,"delta"=0]) ;
+Mapped user function clip to class class.
+# User defined functions
+> addUserFunction(Tmax_normalized(v)=Pmax/(m*g)*(1-v/vmax));
+#addUserFunction(clip(v,mi,ma)=Pmax/(m*g)*(1-v/vmax));
+# Generation of optimal control equations and C++ code
+> Describe(buildOCProblem);
+
+buildOCProblem::symbol = buildOCProblem
+
+# Set default parameters (optional)
+# It is possible to define the default values for all parameters that appear in the full set of equations of the optimal control problem.
+# This is an optional command that the user may need if he wish to automatically produce a file data. 
+# The command can called more than onec with different arguments which will be added to a global list.
+> data := [
+>   g        = 9.81,
+>   m        = 275,
+>   mur_max  = 1,
+>   mur_min  = -1,
+>   muf_min  = -1,
+>   vmur_min = -0.5,
+>   vmur_max =  0.5,
+>   vmuf_min = -0.5,
+>   vmuf_max =  0.5,
+>   v_i      = 10,
+>   v_f      = 10,
+>   mur_i    = 0,
+>   mur_f    = 0,
+>   muf_i    = 0,
+>   muf_f    = 0,
+>   Pmax     = 50*1000, # Kwatt
+>   vmax     = 100
+> ]:
+# Post process variables
+# Add standard post process variables in the output of the numerical solver: state variables, lagrange multipliers, controls, penalties and mesh variables.
+> post_list := [[Tmax_normalized(v(zeta)), "Tmax_norma"]] :
+> 
+# Select upwind
+#setFDorder([2,3],"backward");
+#setFDorderCoEquation([mur,muf],"forward") ;
+> generateOCProblem( "Bike1D",
+>                     integral_post_processing  = [[1/v(zeta),"time"]],
+>                     post_processing = post_list,
+>                     parameters   = data,
+>                     mesh         = [ length=1000, n=1000 ],
+>                     states_guess = [ v = v_i] ) ;
+
+Step 1, generate BVP
+--------------------
+Generating list of variables
+Building penalty functions (Jp_fun)
+Building Hamiltonian function (H_fun)
+Building gradient of Hamiltonian function (dHdx_vec)
+Building dinamical system with co-equation
+Building system of equations of optimal controls (g_vec)
+Building left and right substitution for jump and boundary conditions
+Building equations of boundary conditions (BC_fun, BC_vec)
+Building equations for interface or transition conditions
+
+Step 2, solve or guess controls
+-------------------------------
+                            ["mur", "muf", "1", "2"]
+
+                          {["1", "mur"], ["2", "muf"]}
+
+
+                           CCC                    CCC                          
+                           mur                    muf                          
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            D                      D                           
+                            DD                    DD                           
+                            D                      D                           
+                            D                      D                           
+                           C1C                    C2C                          
+                           CCC                    CCC                          
+                                                                               
+Controls explicitly solved:
+Control murControl:mur(zeta) = murControl___dot___solve(-lambda1(zeta) g v(zeta), mur_min,
+
+    clip(Tmax_normalized(v(zeta)), 0, mur_max))
+
+Control mufControl:   muf(zeta) = mufControl___dot___solve(-lambda1(zeta) g v(zeta), muf_min, 0)
+
+
+Step 3, add post process: list is reinitialized
+-----------------------------------------------
+
+Step 4, generate guess
+----------------------
+
+Step 5, generate Finite Difference
+----------------------------------
+Generating DgDu_mat:        2 x 2
+Generating DgDp_mat:        2 x 0
+Generating DgDz_mat:        2 x 2
+Generating DjumpDz_mat:     2 x 4
+Generating DjumpDp_mat:     2 x 0
+Generating DBCDz_mat:       4 x 4
+Generating DBCDpomega_mat:  4 x 2
+
+Building a_vec [C]=centered, [F]=forward, [B]=backward: [4]=4th order [T]=trapezoidal rule
+{1[C] 2[C] }
+
+Substituting optimal controls
+Generating DaDz_mat:        2 x 4
+Generating DaDp_mat:        2 x 0
+
+Step 6, generate Mesh (if required)
+-----------------------------------
+Mapped function(s) of class: Mechatronix#MeshStd instance: *pMesh.
+
+Step 7, add check for admissible states
+---------------------------------------
+
+Step 8, add check for admissible controls
+-----------------------------------------
+
+Step 9, setup parameters
+------------------------
+Reordered parameters
+[vmax, g, muf_min, v_f, mur_i, Pmax, vmuf_max, mur_f, mur_min, vmur_min, muf_i,
+
+    vmuf_min, v_i, muf_f, m, vmur_max, mur_max]
+
+Typesetting:-mtext(
+
+    "variable(s) `{vmur_max}` is initialized but not used in the model!",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+Typesetting:-mtext(
+
+    "variable(s) `{muf_f}` is initialized but not used in the model!",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+Typesetting:-mtext(
+
+    "variable(s) `{vmuf_min}` is initialized but not used in the model!",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+Typesetting:-mtext(
+
+    "variable(s) `{muf_i}` is initialized but not used in the model!",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+Typesetting:-mtext(
+
+    "variable(s) `{vmur_min}` is initialized but not used in the model!",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+Typesetting:-mtext(
+
+    "variable(s) `{mur_f}` is initialized but not used in the model!",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+Typesetting:-mtext(
+
+    "variable(s) `{vmuf_max}` is initialized but not used in the model!",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+Typesetting:-mtext(
+
+    "variable(s) `{mur_i}` is initialized but not used in the model!",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+Model parameters
+----------------
+BVP:             [g, muf_min, mur_max, mur_min]
+Guess:           []
+BC:              [v_f, v_i]
+Post processing: []
+User functions:  [Pmax, m, vmax]
+Continuation:    []
+Constraints:     []
+Auxiliary:       {muf_min, mur_max, mur_min}
+
+Working directory already exists
+Working directory: /Users/matteoragni/workspace/OCP-tests/test-Bike1D/model/OCP_tmp/
+
+Generate definitions
+--------------------
+Xvars,Lvars,Zvars,Uvars,Pvars,OMEGAvars,POSTnames,INTPOSTnames
+bvp,guess,bc,post,continuation,constraints
+model
+auxyliary
+user
+constraints
+generating SUBS
+
+Write the C-Code of the User Defined functions
+----------------------------------------------
+Generating C code for User Function: Tmax_normalized ...
+Generating C code for User Function: Tmax_normalized_D ...
+Generating C code for User Function: Tmax_normalized_DD ...
+
+Write the C-Code for OCP problem
+--------------------------------
+Generating C code for:
+q, memory used=33.0MB, alloc=76.3MB, time=0.66
+lagrange_target, mayer_target, Jp_fun, a, u, p_guess, jump, BC, post, memory used=56.1MB, alloc=108.3MB, time=0.99
+integrated_post, g, DaDz, DaDp, DgDu, DgDp, DjumpDz, DjumpDp, DBCDz, DBCDpomega, memory used=84.6MB, alloc=140.3MB, time=1.39
+z_guess.
+z_check.
+u_guess.
+u_check.
+
+Continuation
+------------
+OCP generation completed
+Generate C++ files from templates
+---------------------------------
+Command: /usr/local/bin/pins /Library/Frameworks/Maple.framework/Versions/18/toolbox/XOptima/lib/../XOptima_GenerateCppCode_OCP.rb Bike1D --exclude=[] --output_directory=../
+Project Bike1D generated correctly!
+
+Code generation completed!
+--------------------------
+Deleting unnecessary files!
+> ocpSys:=getOCProblem(true);
+Error, invalid input: too many and/or wrong type of arguments passed to
+XOptima:-getOCProblem; first unused argument is true
+> 
+# The discretized system is automatically converted into a C code. The code is at an intermediate level and is a pure C code.
+#generateProjectCode(projectName,codegenOptions=[optimize=true, deducetypes=false, coercetypes=false]) ;
+# Generate C++ files and data files
+# The interemediate C code is then manipulated and written in a set of C++ template files to be compiled.
+# A project name must be defined. The name will be the BVP derived class name for the optimal control problem.
+# Files to be compiled are moved in ./srcs/ folder and data files are moved in sim folder and mex-sim folder for Matlab
+> 
+> quit
+memory used=96.5MB, alloc=140.3MB, time=1.53
+cd -
+clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D.cc
+[0;32;49m>> source code generated[0m
+[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D.cc[0m
+clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Guess.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Guess.cc
+[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Guess.cc[0m
+clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Methods.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Methods.cc
+[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Methods.cc[0m
+clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_c_interface.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_c_interface.cc
+[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_c_interface.cc[0m
+clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_mruby_dll.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_mruby_dll.cc
+[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_mruby_dll.cc[0m
+clang++ -arch x86_64 -dynamiclib -current_version 1.0 -std=c++11 -stdlib=libc++ -F/Library/Frameworks -framework MechatronixCore -framework MechatronixInterfaceLua -framework MechatronixInterfaceMruby -framework MechatronixODE -framework MechatronixRoad -framework MechatronixSolver -framework MechatronixVehicle -framework MechatronixManufacturing -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/lib/libBike1D.dylib -install_name @rpath/../lib/libBike1D.dylib /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D.o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Guess.o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Methods.o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_c_interface.o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_mruby_dll.o
+[0;32;49m>> Building libBike1D[0m
+chmod u+x /Users/matteoragni/workspace/OCP-tests/test-Bike1D/Bike1D_run.rb
+chmod u+x /Users/matteoragni/workspace/OCP-tests/test-Bike1D/Bike1D_run_ffi.rb
+clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/Bike1D_Main.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/Bike1D_Main.cc
+[0;32;49m   built library /Users/matteoragni/workspace/OCP-tests/test-Bike1D/lib/libBike1D.dylib[0m
+[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/Bike1D_Main.cc[0m
+clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/usr/include/atlas -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -L/Users/matteoragni/workspace/OCP-tests/test-Bike1D/lib -lBike1D -std=c++11 -stdlib=libc++ -F/Library/Frameworks -framework MechatronixCore -framework MechatronixInterfaceLua -framework MechatronixInterfaceMruby -framework MechatronixODE -framework MechatronixRoad -framework MechatronixSolver -framework MechatronixVehicle -framework MechatronixManufacturing -Wl,-rpath,@loader_path/. /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/Bike1D_Main.cc -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/bin/main
+[0;32;49m>> Building Bike1D_Main[0m
+[0;32;49m   built executable /Users/matteoragni/workspace/OCP-tests/test-Bike1D/bin/main[0m

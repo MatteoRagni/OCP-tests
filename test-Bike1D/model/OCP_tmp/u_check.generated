@@ -1,0 +1,5 @@
+
+__dummy__1 = mufControl___dot___check_range(__U[1], ModelPars[3], 0);
+t6 = Tmax_normalized(__Z[0]);
+t8 = clip(t6, 0, ModelPars[4]);
+__dummy__2 = murControl___dot___check_range(__U[0], ModelPars[5], t8);

@@ -1,0 +1,5 @@
+
+t1 = __Z[2];
+t3 = ModelPars[0];
+t4 = FyControl___dot___D_1(__U[0], -t3, t3);
+result[0] = -__Z[4] * t1 * ModelPars[3] + t1 * t4;

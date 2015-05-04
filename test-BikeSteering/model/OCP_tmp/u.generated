@@ -1,0 +1,3 @@
+
+t4 = ModelPars[0];
+result[0] = FyControl___dot___solve(__Z[4] * ModelPars[3], -t4, t4);

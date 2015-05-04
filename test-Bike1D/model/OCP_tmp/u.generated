@@ -1,0 +1,7 @@
+
+t4 = __Z[0];
+t5 = __Z[1] * ModelPars[1] * t4;
+t7 = Tmax_normalized(t4);
+t9 = clip(t7, 0, ModelPars[4]);
+result[0] = murControl___dot___solve(-t5, ModelPars[5], t9);
+result[1] = mufControl___dot___solve(-t5, ModelPars[3], 0);

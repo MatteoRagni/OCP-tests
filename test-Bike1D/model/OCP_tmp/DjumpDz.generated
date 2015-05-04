@@ -1,0 +1,7 @@
+
+result[0] = -1;
+result[1] = 1;
+result[2] = -__ZL[1];
+result[3] = -__ZL[0];
+result[4] = __ZR[1];
+result[5] = __ZR[0];

@@ -1,0 +1,3 @@
+
+t2 = ModelPars[0];
+__dummy__1 = FyControl___dot___check_range(__U[0], -t2, t2);

@@ -1,0 +1,2 @@
+
+res = ModelPars[0] / ModelPars[2] / ModelPars[1] * (1 - _v / ModelPars[8]);

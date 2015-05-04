@@ -1,0 +1,11 @@
+
+t1 = __Z[0];
+result[0] = 0.1e1 / t1;
+t4 = Tmax_normalized(t1);
+t6 = clip(t4, 0, ModelPars[4]);
+t7 = murControl(__U[0], ModelPars[5], t6);
+t11 = mufControl(__U[1], ModelPars[3], 0);
+result[1] = result[0] * t11 + result[0] * t7;
+result[2] = t7;
+result[3] = t11;
+result[4] = t4;

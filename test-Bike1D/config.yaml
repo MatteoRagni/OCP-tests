@@ -1,0 +1,28 @@
+---
+:test: Bike1D
+:active: true
+:data_backup: true
+:vars: 
+  - :name: vmur
+  - :name: vmuf
+  - :name: vmurControl
+  - :name: vmufControl
+:graph:
+  - :name: vmu
+    :x_axis: zeta
+    :y_axis:
+      - :name: vmur
+        :color: red
+        :legend: vmur
+      - :name: vmuf
+        :color: blue
+        :legend: vmuf
+  - :name: vmuCtrl
+    :x_axis: zeta
+    :y_axis:
+      - :name: vmurControl
+        :color: red
+        :legend: ctrlR
+      - :name: vmufControl
+        :color: red
+        :legend: ctrlL

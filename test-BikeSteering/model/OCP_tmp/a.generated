@@ -1,0 +1,22 @@
+
+t1 = ModelPars[1];
+t8 = __QR[0] - __QL[0];
+t9 = __ZM[3];
+t11 = __ZM[2];
+result[0] = -t1 * (__ZR[4] - __ZL[4]) - t8 * t9 * t11;
+t15 = __ZM[4];
+t18 = ModelPars[4];
+t19 = ModelPars[2];
+t20 = t18 * t19;
+t21 = ModelPars[3];
+result[1] = -t11 * t15 * t20 * t21 * t8 + __ZL[3] - __ZR[3];
+t26 = minimumTimeSize___dot___D(t11);
+t27 = __UM[0];
+t28 = ModelPars[0];
+t29 = FyControl(t27, -t28, t28);
+t30 = __ZM[0];
+t32 = __ZM[1];
+result[2] = -__ZR[5] + __ZL[5] - t8 * (t26 + t29 + t9 * t30 + t15 * (t20 * t21 * t32 - t21 * t27));
+result[3] = -t11 * t30 * t8 - __ZL[1] + __ZR[1];
+result[4] = t1 * (__ZR[0] - __ZL[0]) - t8 * (t11 * t18 * t19 * t21 * t32 - t11 * t21 * t27);
+result[5] = __ZR[2] - __ZL[2];

@@ -1,0 +1,12 @@
+
+result[0] = __ZL[0] - ModelPars[6];
+result[1] = __ZL[1] - ModelPars[8];
+result[2] = __ZR[0] - ModelPars[5];
+result[3] = __ZR[1] - ModelPars[7];
+t9 = ModelPars[1];
+result[4] = t9 * __ZL[4] + __OMEGA[0];
+result[5] = __OMEGA[1] + __ZL[3];
+result[6] = __ZL[5];
+result[7] = -t9 * __ZR[4] + __OMEGA[2];
+result[8] = __OMEGA[3] - __ZR[3];
+result[9] = 1 - __ZR[5];

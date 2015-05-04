@@ -1,0 +1,6 @@
+
+t1 = __Z[2];
+t2 = minimumTimeSize(t1);
+t4 = ModelPars[0];
+t5 = FyControl(__U[0], -t4, t4);
+res = t1 * t5 + t2;

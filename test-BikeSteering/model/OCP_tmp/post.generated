@@ -1,0 +1,12 @@
+
+result[0] = 0;
+t1 = __Z[2];
+t2 = minimumTimeSize(t1);
+t4 = ModelPars[0];
+t5 = FyControl(__U[0], -t4, t4);
+result[1] = t1 * t5 + t2;
+result[2] = t5;
+result[3] = t2;
+result[4] = t1;
+t15 = sqrt(ModelPars[4] * ModelPars[2] * ModelPars[3] / ModelPars[1]);
+result[5] = result[4] * t15;
