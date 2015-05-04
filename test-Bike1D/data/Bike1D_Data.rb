@@ -18,9 +18,9 @@
 include Mechatronix
 
 # Auxiliary values
+mur_max = 1
 muf_min = -1
 mur_min = -1
-mur_max = 1
 
 
 mechatronix do |data|
@@ -76,7 +76,7 @@ mechatronix do |data|
   data.MappedObjects = {}
 
   # ClipIntervalWithSinAtan
-  data.MappedObjects[:clip] = { :delta => 0, :h => 0.01 }
+  data.MappedObjects[:clip] = { :h => 0.01, :delta => 0 }
 
   # Controls
   # Penalty type controls: U_QUADRATIC, U_QUADRATIC2, U_PARABOLA, U_CUBIC

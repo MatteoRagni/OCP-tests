@@ -23,9 +23,8 @@ end
 begin # definitions
   ROOT          = Rake.original_dir
   MODEL_DIR     = "model"
-
+  
   raise ModelDirNotFoundError unless (Dir.exist? "#{ROOT}/#{MODEL_DIR}")
-
   tmp_name      = ROOT.split('/')[-1].match(/^test-(\w+)$/)
 
   raise WrongTestDirError unless tmp_name

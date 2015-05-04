@@ -271,13 +271,13 @@ Step 8, add check for admissible controls
 Step 9, setup parameters
 ------------------------
 Reordered parameters
-[vmax, g, muf_min, v_f, mur_i, Pmax, vmuf_max, mur_f, mur_min, vmur_min, muf_i,
+[mur_min, vmur_min, v_f, vmur_max, mur_f, m, Pmax, muf_min, mur_i, vmuf_min, g,
 
-    vmuf_min, v_i, muf_f, m, vmur_max, mur_max]
+    vmax, vmuf_max, muf_f, mur_max, muf_i, v_i]
 
 Typesetting:-mtext(
 
-    "variable(s) `{vmur_max}` is initialized but not used in the model!",
+    "variable(s) `{muf_i}` is initialized but not used in the model!",
 
     mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
 
@@ -289,19 +289,19 @@ Typesetting:-mtext(
 
 Typesetting:-mtext(
 
+    "variable(s) `{vmuf_max}` is initialized but not used in the model!",
+
+    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
+
+Typesetting:-mtext(
+
     "variable(s) `{vmuf_min}` is initialized but not used in the model!",
 
     mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
 
 Typesetting:-mtext(
 
-    "variable(s) `{muf_i}` is initialized but not used in the model!",
-
-    mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
-
-Typesetting:-mtext(
-
-    "variable(s) `{vmur_min}` is initialized but not used in the model!",
+    "variable(s) `{mur_i}` is initialized but not used in the model!",
 
     mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
 
@@ -313,13 +313,13 @@ Typesetting:-mtext(
 
 Typesetting:-mtext(
 
-    "variable(s) `{vmuf_max}` is initialized but not used in the model!",
+    "variable(s) `{vmur_max}` is initialized but not used in the model!",
 
     mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
 
 Typesetting:-mtext(
 
-    "variable(s) `{mur_i}` is initialized but not used in the model!",
+    "variable(s) `{vmur_min}` is initialized but not used in the model!",
 
     mathcolor = "magenta", mathbackground = "white", fontweight = "bold")
 
@@ -356,9 +356,9 @@ Generating C code for User Function: Tmax_normalized_DD ...
 Write the C-Code for OCP problem
 --------------------------------
 Generating C code for:
-q, memory used=33.0MB, alloc=76.3MB, time=0.66
-lagrange_target, mayer_target, Jp_fun, a, u, p_guess, jump, BC, post, memory used=56.1MB, alloc=108.3MB, time=0.99
-integrated_post, g, DaDz, DaDp, DgDu, DgDp, DjumpDz, DjumpDp, DBCDz, DBCDpomega, memory used=84.6MB, alloc=140.3MB, time=1.39
+q, memory used=33.1MB, alloc=76.3MB, time=0.56
+lagrange_target, mayer_target, Jp_fun, a, u, p_guess, jump, BC, post, memory used=56.1MB, alloc=108.3MB, time=0.88
+integrated_post, g, DaDz, DaDp, DgDu, DgDp, DjumpDz, DjumpDp, DBCDz, DBCDpomega, memory used=84.6MB, alloc=140.3MB, time=1.29
 z_guess.
 z_check.
 u_guess.
@@ -387,20 +387,10 @@ XOptima:-getOCProblem; first unused argument is true
 # Files to be compiled are moved in ./srcs/ folder and data files are moved in sim folder and mex-sim folder for Matlab
 > 
 > quit
-memory used=96.5MB, alloc=140.3MB, time=1.53
+memory used=96.5MB, alloc=140.3MB, time=1.44
 cd -
-clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D.cc
+clang++ -arch x86_64 -dynamiclib -current_version 1.0 -std=c++11 -stdlib=libc++ -F/Library/Frameworks -framework MechatronixCore -framework MechatronixInterfaceLua -framework MechatronixInterfaceMruby -framework MechatronixODE -framework MechatronixRoad -framework MechatronixSolver -framework MechatronixVehicle -framework MechatronixManufacturing -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/lib/libBike1D.dylib -install_name @rpath/../lib/libBike1D.dylib 
 [0;32;49m>> source code generated[0m
-[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D.cc[0m
-clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Guess.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Guess.cc
-[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Guess.cc[0m
-clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Methods.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Methods.cc
-[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Methods.cc[0m
-clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_c_interface.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_c_interface.cc
-[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_c_interface.cc[0m
-clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -F/Library/Frameworks -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_mruby_dll.o -c /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_mruby_dll.cc
-[0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_mruby_dll.cc[0m
-clang++ -arch x86_64 -dynamiclib -current_version 1.0 -std=c++11 -stdlib=libc++ -F/Library/Frameworks -framework MechatronixCore -framework MechatronixInterfaceLua -framework MechatronixInterfaceMruby -framework MechatronixODE -framework MechatronixRoad -framework MechatronixSolver -framework MechatronixVehicle -framework MechatronixManufacturing -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/lib/libBike1D.dylib -install_name @rpath/../lib/libBike1D.dylib /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D.o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Guess.o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_Methods.o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_c_interface.o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs/Bike1D_mruby_dll.o
 [0;32;49m>> Building libBike1D[0m
 chmod u+x /Users/matteoragni/workspace/OCP-tests/test-Bike1D/Bike1D_run.rb
 chmod u+x /Users/matteoragni/workspace/OCP-tests/test-Bike1D/Bike1D_run_ffi.rb
@@ -409,4 +399,19 @@ clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-lo
 [0;33;49m>> Compiling /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/Bike1D_Main.cc[0m
 clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -m64 -O3 -funroll-loops -fPIC -std=c++11 -stdlib=libc++ -arch x86_64 -I/usr/local/include -I/usr/include/atlas -I/Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/srcs -L/Users/matteoragni/workspace/OCP-tests/test-Bike1D/lib -lBike1D -std=c++11 -stdlib=libc++ -F/Library/Frameworks -framework MechatronixCore -framework MechatronixInterfaceLua -framework MechatronixInterfaceMruby -framework MechatronixODE -framework MechatronixRoad -framework MechatronixSolver -framework MechatronixVehicle -framework MechatronixManufacturing -Wl,-rpath,@loader_path/. /Users/matteoragni/workspace/OCP-tests/test-Bike1D/ocp-cpp/Bike1D_Main.cc -o /Users/matteoragni/workspace/OCP-tests/test-Bike1D/bin/main
 [0;32;49m>> Building Bike1D_Main[0m
-[0;32;49m   built executable /Users/matteoragni/workspace/OCP-tests/test-Bike1D/bin/main[0m
+Undefined symbols for architecture x86_64:
+  "Bike1DDefine::Bike1D::setup(GC::GenericContainer const&)", referenced from:
+      _main in Bike1D_Main-b1d947.o
+  "Bike1DDefine::Bike1D::solve(GC::GenericContainer const&, GC::GenericContainer&)", referenced from:
+      _main in Bike1D_Main-b1d947.o
+  "Bike1DDefine::Bike1D::Bike1D(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, std::__1::basic_ostream<char, std::__1::char_traits<char> >*, int)", referenced from:
+      _main in Bike1D_Main-b1d947.o
+  "Bike1DDefine::Bike1D::~Bike1D()", referenced from:
+      _main in Bike1D_Main-b1d947.o
+ld: symbol(s) not found for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+rake aborted!
+Command failed with status (1): [clang++ -msse4.2 -msse4.1 -mssse3 -msse3 -...]
+/Users/matteoragni/workspace/OCP-tests/Rakefile:177:in `block in <top (required)>'
+Tasks: TOP => main
+(See full trace by running task with --trace)

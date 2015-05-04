@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-%w{pry colorize yaml gnuplot artii}.each do |gem|
+%w{pry colorize yaml gnuplot artii csv}.each do |gem|
   raise LoadError, "You must install gem: #{gem}\n\t $ sudo gem instal #{gem}" if not require gem
 end
 
@@ -17,7 +17,7 @@ module OCPTest
       
       @tests = []
       identify_test_dir
-      
+
       @tests.each { |conf| Test.new(conf) }
     end
     
@@ -30,14 +30,14 @@ module OCPTest
           if yaml_data[:active] == true then
             yaml_data[:path] = dir
             @tests << yaml_data
-            puts "Project #{dir} added".green
+            puts ">>> Project #{dir} added".green
           elsif yaml_data[:active] == false then
-            warn "Found disabled project in #{dir}".yellow
+            warn ">>> Found disabled project in #{dir}".yellow
           else
-            warn "#{dir + '/config.yaml'} do not contains :active definition. Skipped.".red
+            warn ">>> #{dir + '/config.yaml'} do not contains :active definition. Skipped.".red
           end
         else
-          warn "No configuration file found in #{dir}".red
+          warn ">>> No configuration file found in #{dir}".red
         end
       }
     end
@@ -47,24 +47,40 @@ module OCPTest
     def initialize(conf)
       @conf = conf
       inspect
-      exec
+      #exec
+      load_csv("#{@conf[:path]}/data/#{@conf[:test]}_out.txt")
+      binding.pry
     end
     
     def exec
-      Dir.chdir(@conf[:path])
-      system("rake clobber maple clean main >& compile.log; ./bin/main")
-      Dir.chdir("..")
+      puts Dir.pwd
+      # Wait until rake as ended with thread
+      %w[clobber maple clean main].each do |target|
+        thread = Thread.new do
+          puts ">>> Invoking target: ".yellow + "#{target}".green
+          system "cd #{@conf[:path]} && rake #{target}"
+        end
+        thread.join
+      end
+      thread = Thread.new do
+        system "cd #{@conf[:path]} && bin/main"
+      end
+      thread.join
+      puts ">>> Test completed".yellow
+      # system "cd #{@conf[:path]} && rake clobber && rake maple && rake clean && rake main && bin/main && cd .."
     end
     
     def load_csv(file)
       @data = {}
-      ary = CSV.read(file, col_sep: "\t", converters: :numeric)
+      ary = CSV::read(file, col_sep: "\t", converters: :numeric)
       ary[0].each_with_index { |k, i|
         @data[k] = []
         @data[i] = @data[k]
       }
       for i in 1...ary.size
-        
+        for j in 0...@data.keys.size
+          @data[j] << ary[j][i]
+        end
       end
     end
     
@@ -73,7 +89,7 @@ module OCPTest
       puts (Artii::Base.new({}).asciify("TEST - " + @conf[:test])).green
       puts
       puts "  Configuration:".green
-      puts "   - Backup old data = #{@conf[]}"
+      puts "   - Backup old data = #{@conf[:data_backup]}".green
       puts "   - Variables       = #{@conf[:vars].size}".green
       puts "   - Graphs          = #{@conf[:graph].size}".green
       puts "   - Path            = #{@conf[:path]}".green

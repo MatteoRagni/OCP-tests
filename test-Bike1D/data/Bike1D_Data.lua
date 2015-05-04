@@ -18,9 +18,9 @@
 --]]
 
 -- Auxiliary values
+mur_max = 1
 muf_min = -1
 mur_min = -1
-mur_max = 1
 
 
 model = {
@@ -68,8 +68,8 @@ model = {
   -- functions mapped objects
   MappedObjects = {
   -- ClipIntervalWithSinAtan
-    clipdelta => 0,
     cliph => 0.01,
+    clipdelta => 0,
   }
 
   -- Controls
