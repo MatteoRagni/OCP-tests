@@ -24,95 +24,92 @@ class COMMON_Build
     #--------------------------
     :ModelParameters => [
       {
-        :value   => "50000",
-        :name    => "Pmax",
         :C_value => "50000",
+        :name    => "Pmax",
+        :value   => "50000",
       },
       {
-        :value   => "9.81",
-        :name    => "g",
         :C_value => "0.981e1",
+        :name    => "g",
+        :value   => "9.81",
       },
       {
-        :value   => "275",
-        :name    => "m",
         :C_value => "275",
+        :name    => "m",
+        :value   => "275",
       },
       {
-        :value   => "-1",
+        :C_value => "-1",
         :name    => "muf_min",
-        :C_value => "-1",
-      },
-      {
-        :value   => "1",
-        :name    => "mur_max",
-        :C_value => "1",
-      },
-      {
         :value   => "-1",
-        :name    => "mur_min",
+      },
+      {
+        :C_value => "1",
+        :name    => "mur_max",
+        :value   => "1",
+      },
+      {
         :C_value => "-1",
+        :name    => "mur_min",
+        :value   => "-1",
       },
       {
-        :value   => "10",
+        :C_value => "10",
         :name    => "v_f",
-        :C_value => "10",
-      },
-      {
         :value   => "10",
-        :name    => "v_i",
-        :C_value => "10",
       },
       {
-        :value   => "100",
-        :name    => "vmax",
+        :C_value => "10",
+        :name    => "v_i",
+        :value   => "10",
+      },
+      {
         :C_value => "100",
+        :name    => "vmax",
+        :value   => "100",
       },
     ],
 
     #--------------------------
     :AuxiliaryParameters => [
       {
-        :value   => "1",
-        :name    => "mur_max",
-        :C_value => "1",
-      },
-      {
-        :value   => "-1",
+        :C_value => "-1",
         :name    => "muf_min",
-        :C_value => "-1",
+        :value   => "-1",
       },
       {
-        :value   => "-1",
-        :name    => "mur_min",
         :C_value => "-1",
+        :name    => "mur_min",
+        :value   => "-1",
+      },
+      {
+        :C_value => "1",
+        :name    => "mur_max",
+        :value   => "1",
       },
     ],
 
     #--------------------------
     :UserFunctions => [
       {
+        :func => "Tmax_normalized",
+        :derivatives => "2",
         :args => [ "_v" ],
         :body => "2",
-        :derivatives => "2",
-        :func => "Tmax_normalized",
       },
     ],
     :UserMapFunctions => [
       {
-        :namepars => [ "h", "delta" ],
-        :args => [ "x", "a", "b" ],
-        :class => "ClipIntervalWithSinAtan",
         :par_delta => "0",
         :func => "clip",
+        :namepars => [ "delta", "h" ],
         :par_h => "0.01",
+        :args => [ "x", "a", "b" ],
+        :class => "ClipIntervalWithSinAtan",
       },
     ],
     :UserFunctionsClassInstances => [
       {
-        :mapped => [],
-        :header => "#include <MechatronixCore/MechatronixCore.hh>",
-        :class => "Mechatronix#MeshStd",
         :setup => {
           :s0 => "0",
           :segments => [
@@ -122,9 +119,12 @@ class COMMON_Build
             },
           ],
         },
-        :instance => "*pMesh",
-        :is_mesh_object => "true",
         :namespace => "MechatronixCore",
+        :is_mesh_object => "true",
+        :instance => "*pMesh",
+        :header => "#include <MechatronixCore/MechatronixCore.hh>",
+        :mapped => [],
+        :class => "Mechatronix#MeshStd",
       },
     ],
 
@@ -133,38 +133,38 @@ class COMMON_Build
     :Constraint2D => [],
     :ConstraintU  => [
       {
-        :max       => "clip(Tmax_normalized(v(zeta)),0,mur_max)",
-        :class     => "PenaltyU",
-        :min       => "mur_min",
-        :u         => "mur(zeta)",
+        :type      => "U_LOGARITHMIC",
         :scale     => "1/v(zeta)",
         :name      => "murControl",
         :epsilon   => "0.001",
-        :type      => "U_LOGARITHMIC",
         :tolerance => "0.001",
+        :min       => "mur_min",
+        :max       => "clip(Tmax_normalized(v(zeta)),0,mur_max)",
+        :class     => "PenaltyU",
+        :u         => "mur(zeta)",
       },
       {
-        :max       => "0",
-        :class     => "PenaltyU",
-        :min       => "muf_min",
-        :u         => "muf(zeta)",
+        :type      => "U_LOGARITHMIC",
         :scale     => "1/v(zeta)",
         :name      => "mufControl",
         :epsilon   => "0.001",
-        :type      => "U_LOGARITHMIC",
         :tolerance => "0.001",
+        :min       => "muf_min",
+        :max       => "0",
+        :class     => "PenaltyU",
+        :u         => "muf(zeta)",
       },
     ],
     :Bc => [
       {
-        :value => "1",
-        :name  => "initial_v",
         :name1 => "initial_v",
+        :name  => "initial_v",
+        :value => "1",
       },
       {
-        :value => "1",
-        :name  => "final_v",
         :name1 => "final_v",
+        :name  => "final_v",
+        :value => "1",
       },
     ],
     :q_n_eqns => 1,

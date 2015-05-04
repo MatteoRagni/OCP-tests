@@ -1,7 +1,7 @@
 /*--------------------------------------------------------------------------*\
  |  file: BikeSteering_Methods.cc                                           |
  |                                                                          |
- |  version: 1.0   date 27/4/2015                                           |
+ |  version: 1.0   date 4/5/2015                                            |
  |                                                                          |
  |  Copyright (C) 2015                                                      |
  |                                                                          |
@@ -438,9 +438,9 @@ namespace BikeSteeringDefine {
     MeshStd::SegmentClass const & segment = pMesh->getSegmentByIndex(i_segment) ;
 
     try {
-      
-      valueType t2   =  ModelPars[iM_Fmax];
-      FyControl.check_range(__U[0], -t2, t2);
+        
+        valueType t2   =  ModelPars[iM_Fmax];
+        FyControl.check_range(__U[0], -t2, t2);
 
     } catch ( exception const & exc ) {
       DO_ERROR("BikeSteering::u_check_if_admissible: " << exc.what()) ;

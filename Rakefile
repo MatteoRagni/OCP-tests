@@ -73,7 +73,8 @@ begin # definitions
     "#{ROOT}/ocp-*",
     "#{ROOT}/*_run*.rb",
     "#{ROOT}/#{MODEL_DIR}/bvpOut",
-    "#{ROOT}/log/*.*"
+    "#{ROOT}/log/*.*",
+    "#{ROOT}/*.png"
   ]
 
   include FileUtils

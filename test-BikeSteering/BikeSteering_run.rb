@@ -2,7 +2,7 @@
  #--------------------------------------------------------------------------#
  #  file: BikeSteering_run.rb                                               #
  #                                                                          #
- #  version: 1.0   date 27/4/2015                                           #
+ #  version: 1.0   date 4/5/2015                                            #
  #                                                                          #
  #  Copyright (C) 2015                                                      #
  #                                                                          #
@@ -22,10 +22,12 @@ problem_name = "BikeSteering"
 
 # Compile the scripts, unless the library already exists
 # the command line flag '-f' forces recompilation
-if ! File.exist?("lib/lib#{problem_name}.dylib") || ARGV.include?('-f') then
+# the command line flag '-b' only performs compilation and skips solution
+if ! File.exist?("lib/lib#{problem_name}.dylib") || ARGV.include?('-f') || ARGV.include?('-b') then
   require "build"
   compiler = MXBuilder.new(problem_name)
   compiler.build
+  exit if ARGV.include?('-b')
 end
 
 require './data/BikeSteering_Data.rb'

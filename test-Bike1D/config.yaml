@@ -3,26 +3,27 @@
 :active: true
 :data_backup: true
 :vars: 
-  - :name: vmur
-  - :name: vmuf
-  - :name: vmurControl
-  - :name: vmufControl
+  - time
+  - vmur
+  - vmuf
+  - vmurControl
+  - vmufControl
 :graph:
-  - :name: vmu
-    :x_axis: zeta
+  - :name: SpeedGraph
+    :x_axis: time
     :y_axis:
-      - :name: vmur
+      - :name: mur
         :color: red
         :legend: vmur
-      - :name: vmuf
-        :color: blue
+      - :name: muf
+        :color: black
         :legend: vmuf
-  - :name: vmuCtrl
-    :x_axis: zeta
+  - :name: ControlInput
+    :x_axis: time
     :y_axis:
-      - :name: vmurControl
+      - :name: murControl
         :color: red
         :legend: ctrlR
-      - :name: vmufControl
-        :color: red
+      - :name: mufControl
+        :color: black
         :legend: ctrlL

@@ -31,73 +31,73 @@ class COMMON_Build
     #--------------------------
     :ModelParameters => [
       {
+        :name    => "Fmax",
         :value   => "m*g*mu",
         :C_value => "m * g * mu",
-        :name    => "Fmax",
       },
       {
+        :name    => "Ix",
         :value   => "40",
         :C_value => "40",
-        :name    => "Ix",
       },
       {
+        :name    => "g",
         :value   => "9.81",
         :C_value => "0.981e1",
-        :name    => "g",
       },
       {
+        :name    => "h",
         :value   => "0.6",
         :C_value => "0.6e0",
-        :name    => "h",
       },
       {
+        :name    => "m",
         :value   => "250",
         :C_value => "250",
-        :name    => "m",
       },
       {
-        :value   => "0",
-        :C_value => "0",
         :name    => "omega_f",
-      },
-      {
         :value   => "0",
         :C_value => "0",
-        :name    => "omega_i",
       },
       {
+        :name    => "omega_i",
+        :value   => "0",
+        :C_value => "0",
+      },
+      {
+        :name    => "phi_f",
         :value   => "0.174533",
         :C_value => "0.1745329252e0",
-        :name    => "phi_f",
       },
       {
+        :name    => "phi_i",
         :value   => "0",
         :C_value => "0",
-        :name    => "phi_i",
       },
     ],
 
     #--------------------------
     :AuxiliaryParameters => [
       {
-        :value   => "1",
-        :C_value => "1",
-        :name    => "mu",
-      },
-      {
-        :value   => "250",
-        :C_value => "250",
-        :name    => "m",
-      },
-      {
+        :name    => "g",
         :value   => "9.81",
         :C_value => "0.981e1",
-        :name    => "g",
       },
       {
+        :name    => "mu",
+        :value   => "1",
+        :C_value => "1",
+      },
+      {
+        :name    => "m",
+        :value   => "250",
+        :C_value => "250",
+      },
+      {
+        :name    => "Fmax",
         :value   => "m*g*mu",
         :C_value => "m * g * mu",
-        :name    => "Fmax",
       },
     ],
 
@@ -106,82 +106,82 @@ class COMMON_Build
     :UserMapFunctions => [],
     :UserFunctionsClassInstances => [
       {
+        :namespace => "MechatronixCore",
+        :is_mesh_object => "true",
         :header => "#include <MechatronixCore/MechatronixCore.hh>",
-        :instance => "*pMesh",
-        :class => "Mechatronix#MeshStd",
-        :mapped => [],
         :setup => {
           :s0 => "0",
           :segments => [
             {
-              :n      => "10",
               :length => "0.1",
-            },
-            {
-              :n      => "40",
-              :length => "0.4",
-            },
-            {
-              :n      => "40",
-              :length => "0.4",
-            },
-            {
               :n      => "10",
+            },
+            {
+              :length => "0.4",
+              :n      => "40",
+            },
+            {
+              :length => "0.4",
+              :n      => "40",
+            },
+            {
               :length => "0.1",
+              :n      => "10",
             },
           ],
         },
-        :is_mesh_object => "true",
-        :namespace => "MechatronixCore",
+        :mapped => [],
+        :class => "Mechatronix#MeshStd",
+        :instance => "*pMesh",
       },
     ],
 
     #--------------------------
     :Constraint1D => [
       {
-        :tolerance => "0.001",
-        :scale     => "1",
-        :class     => "Penalty1DGreaterThan",
-        :epsilon   => "0.001",
         :name      => "minimumTimeSize",
-        :active    => "true",
+        :epsilon   => "0.001",
         :arg       => "TimeSize(zeta)",
         :subtype   => "PENALTY_REGULAR",
+        :class     => "Penalty1DGreaterThan",
+        :scale     => "1",
+        :active    => "true",
+        :tolerance => "0.001",
       },
     ],
     :Constraint2D => [],
     :ConstraintU  => [
       {
-        :type      => "U_COS_LOGARITHMIC",
-        :tolerance => "0.001",
-        :scale     => "TimeSize(zeta)",
+        :name      => "FyControl",
+        :epsilon   => "0.001",
+        :u         => "Fy(zeta)",
+        :min       => "-Fmax",
         :max       => "Fmax",
         :class     => "PenaltyU",
-        :epsilon   => "0.001",
-        :name      => "FyControl",
-        :min       => "-Fmax",
-        :u         => "Fy(zeta)",
+        :scale     => "TimeSize(zeta)",
+        :tolerance => "0.001",
+        :type      => "U_COS_LOGARITHMIC",
       },
     ],
     :Bc => [
       {
-        :value => "1",
         :name  => "initial_omega",
+        :value => "1",
         :name1 => "initial_omega",
       },
       {
-        :value => "1",
         :name  => "initial_phi",
+        :value => "1",
         :name1 => "initial_phi",
       },
       {
-        :value => "1",
         :name  => "final_omega",
+        :value => "1",
         :name1 => "final_omega",
       },
       {
-        :value => "1",
         :name  => "final_phi",
+        :value => "1",
         :name1 => "final_phi",
       },
     ],

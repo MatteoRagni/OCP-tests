@@ -2,7 +2,7 @@
 /*--------------------------------------------------------------------------*\
  |  file: BikeSteering_Data.lua                                             |
  |                                                                          |
- |  version: 1.0   date 27/4/2015                                           |
+ |  version: 1.0   date 4/5/2015                                            |
  |                                                                          |
  |  Copyright (C) 2015                                                      |
  |                                                                          |
@@ -18,9 +18,9 @@
 --]]
 
 -- Auxiliary values
+g    = 9.81
 mu   = 1
 m    = 250
-g    = 9.81
 Fmax = m*g*mu
 
 
@@ -94,7 +94,7 @@ model = {
   },
 
   -- User defined classes initialization
-  data.Mesh = {:s0=>"0", :segments=>[{:n=>"10", :length=>"0.1"}, {:n=>"40", :length=>"0.4"}, {:n=>"40", :length=>"0.4"}, {:n=>"10", :length=>"0.1"}]};
+  data.Mesh = {:s0=>"0", :segments=>[{:length=>"0.1", :n=>"10"}, {:length=>"0.4", :n=>"40"}, {:length=>"0.4", :n=>"40"}, {:length=>"0.1", :n=>"10"}]};
 
 
 -- user function classes initializations
